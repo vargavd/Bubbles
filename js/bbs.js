@@ -60,7 +60,16 @@ var bbs = (function () {
         render();
     };
     selectBubble = function () {
-        var i, bubble = bubbles[selectedBubbleIndex];
+        var i, bubble;
+
+        for (i = selectedBubbleIndex; i < bubbles.length - 1; i++) {
+            bubble = bubbles[i+1];
+            bubbles[i+1] = bubbles[i];
+            bubbles[i] = bubble;
+        }
+
+        selectedBubbleIndex = bubbles.length - 1;
+        bubble = bubbles[selectedBubbleIndex];
 
         bbs.$elems.bubbleTitleInput().val(bubble.title);
         bbs.$elems.bubbleValueInput().val(bubble.value);
@@ -68,7 +77,7 @@ var bbs = (function () {
         bbs.$elems.bubbleYInput().val(bubble.y);
         bbs.$elems.setBubbleColorInput(bubble.color);
 
-        for (i = 0; i < bubbles.length; i++) {
+        for (i = 0; i < bubbles.length - 1; i++) {
             bubbles[i].selected = false;
         }
 
@@ -82,7 +91,8 @@ var bbs = (function () {
         bbs.$elems.bubbleYInput().val("");
         bbs.$elems.setBubbleColorInput("blue");
 
-        bubbles[selectedBubbleIndex].selected = false;
+        if (selectedBubbleIndex !== null && bubbles.length > selectedBubbleIndex)
+            bubbles[selectedBubbleIndex].selected = false;
         selectedBubbleIndex = null;
 
         render();
@@ -157,10 +167,10 @@ var bbs = (function () {
             render();
         }
     };
-    mouseUp = function (e) {
+    mouseUp = function () {
         bubblePressed = false;
     };
-    changeInputValue = function (e) {
+    changeInputValue = function () {
         if (selectedBubbleIndex === null) {
             return;
         }
