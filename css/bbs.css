@@ -1,0 +1,71 @@
+#wrapper {
+  width: 80%;
+  margin: auto;
+  color: #808080;
+  text-align: center;
+}
+#wrapper #bubble-usage {
+  background: none repeat scroll 0 0 #FFFFFF;
+  box-shadow: 7px 7px 11px 0 rgba(0, 0, 0, 0.47);
+  display: none;
+  font-family: "lucida grande", tahoma, verdana, arial, sans-serif;
+  font-size: 13px;
+  left: 50%;
+  margin-left: -170px;
+  position: fixed;
+  top: 20%;
+  width: 340px;
+  z-index: 2;
+  text-align: left;
+  border: 5px solid #505050;
+  border-radius: 10px;
+  padding: 0 10px;
+}
+#wrapper #bubble-usage h2 {
+  margin-bottom: 10px;
+}
+#wrapper #bubble-usage-mark {
+  font-size: 30px;
+  border-radius: 7px;
+  float: right;
+  background: white;
+  font-weight: bold;
+  margin-top: -44px;
+  opacity: 0.8;
+  padding: 0 8px;
+  position: relative;
+  z-index: 10;
+  cursor: help;
+}
+#wrapper #bubble-usage-mark:hover {
+  opacity: 1.0;
+}
+#bubble-bar {
+  position: relative;
+  top: -36px;
+  display: inline;
+  background-color: white;
+  padding: 10px;
+  opacity: 0.6;
+  border: 1px solid gray;
+}
+#bubble-bar #bubble-color-sample {
+  background-color: #00f;
+  display: inline-block;
+  height: 16px;
+  position: relative;
+  top: 3px;
+  width: 16px;
+}
+#bubble-bar label {
+  margin-left: 20px;
+}
+#bubble-bar label:first-child {
+  margin-left: 0;
+}
+#bubble-bar:hover {
+  opacity: 0.9;
+  -webkit-box-shadow: 1px 0px 3px 0px rgba(50, 50, 50, 0.7);
+  -moz-box-shadow: 1px 0px 3px 0px rgba(50, 50, 50, 0.7);
+  box-shadow: 1px 0px 3px 0px rgba(50, 50, 50, 0.7);
+}
