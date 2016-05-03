@@ -19,10 +19,10 @@ bbs.canvas = (function () {
         ctx.fillStyle = grd;
         ctx.fillRect(0,0,canvasWidth,canvasHeight);
     };
-    drawDiagram = function (bubbles, showTitles, showValues) {
+    drawDiagram = function (shapes, showTitles, showValues) {
         clearCanvas();
-        $.each(bubbles, function (i, bubble) {
-            drawBubble(bubble.x, bubble.y, bubble.value, bubble.color, bubble.title, bubble.value, bubble.selected, showTitles, showValues);
+        $.each(shapes, function (i, shape) {
+            shape.draw(shape.x, shape.y, shape.value, shape.color, shape.title, shape.value, shape.selected, showTitles, showValues);
         });
         drawAxises();
     };
@@ -104,6 +104,7 @@ bbs.canvas = (function () {
     return {
         init: initModule,
         render: drawDiagram,
-        addBubble: addBubble
+        addBubble: addBubble,
+        drawBubble: drawBubble
     };
 }());

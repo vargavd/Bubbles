@@ -6,14 +6,14 @@
 
 var bbs = (function () {
     'use strict';
-    var initModule, bubbles, bubbleId = 0, canvasOffset, render,
+    var initModule, shapes, bubbleId = 0, canvasOffset, render,
         addBubble, rightClick, selectBubble, deselectBubble, changeInputValue, colorChange,
         mouseDown, mouseUp, mouseMove,
         showTitles, showValues,
         bubblePressed = false, selectedBubbleIndex = null, lastMouseX, lastMouseY;
 
     render = function () {
-        bbs.canvas.render(bubbles, showTitles(), showValues());
+        bbs.canvas.render(shapes, showTitles(), showValues());
     };
     showTitles = function () {
         return bbs.$elems.bubblesTitles().is(":checked");
@@ -23,12 +23,12 @@ var bbs = (function () {
     };
     addBubble = function (e) {
         if (selectedBubbleIndex !== null) {
-            bubbles[selectedBubbleIndex].selected = false;
+            shapes[selectedBubbleIndex].selected = false;
         }
 
-        selectedBubbleIndex = bubbles.length;
+        selectedBubbleIndex = shapes.length;
 
-        bubbles.push({
+        shapes.push(bbs.shapes.getCircle({
             x: e.pageX - canvasOffset.left,
             y: e.pageY - canvasOffset.top,
             value: parseInt(bbs.$elems.bubbleValueInput().val(), 10),
@@ -36,7 +36,7 @@ var bbs = (function () {
             title: bbs.$elems.bubbleTitleInput().val(),
             id:  ++bubbleId,
             selected: true
-        });
+        }));
 
 
 
@@ -49,9 +49,9 @@ var bbs = (function () {
 
         e.preventDefault();
 
-        for (i = bubbles.length-1; i >= 0; i--) {
-            if (bubbles[i].value > Math.sqrt(Math.pow(mouseX - bubbles[i].x, 2) + Math.pow(mouseY - bubbles[i].y, 2))) {
-                bubbles.splice(i, 1);
+        for (i = shapes.length-1; i >= 0; i--) {
+            if (shapes[i].value > Math.sqrt(Math.pow(mouseX - shapes[i].x, 2) + Math.pow(mouseY - shapes[i].y, 2))) {
+                shapes.splice(i, 1);
                 break;
             }
         }
@@ -62,14 +62,14 @@ var bbs = (function () {
     selectBubble = function () {
         var i, bubble;
 
-        for (i = selectedBubbleIndex; i < bubbles.length - 1; i++) {
-            bubble = bubbles[i+1];
-            bubbles[i+1] = bubbles[i];
-            bubbles[i] = bubble;
+        for (i = selectedBubbleIndex; i < shapes.length - 1; i++) {
+            bubble = shapes[i+1];
+            shapes[i+1] = shapes[i];
+            shapes[i] = bubble;
         }
 
-        selectedBubbleIndex = bubbles.length - 1;
-        bubble = bubbles[selectedBubbleIndex];
+        selectedBubbleIndex = shapes.length - 1;
+        bubble = shapes[selectedBubbleIndex];
 
         bbs.$elems.bubbleTitleInput().val(bubble.title);
         bbs.$elems.bubbleValueInput().val(bubble.value);
@@ -77,8 +77,8 @@ var bbs = (function () {
         bbs.$elems.bubbleYInput().val(bubble.y);
         bbs.$elems.setBubbleColorInput(bubble.color);
 
-        for (i = 0; i < bubbles.length - 1; i++) {
-            bubbles[i].selected = false;
+        for (i = 0; i < shapes.length - 1; i++) {
+            shapes[i].selected = false;
         }
 
         bubble.selected = true;
@@ -91,8 +91,8 @@ var bbs = (function () {
         bbs.$elems.bubbleYInput().val("");
         bbs.$elems.setBubbleColorInput("blue");
 
-        if (selectedBubbleIndex !== null && bubbles.length > selectedBubbleIndex)
-            bubbles[selectedBubbleIndex].selected = false;
+        if (selectedBubbleIndex !== null && shapes.length > selectedBubbleIndex)
+            shapes[selectedBubbleIndex].selected = false;
         selectedBubbleIndex = null;
 
         render();
@@ -103,8 +103,8 @@ var bbs = (function () {
         lastMouseX = e.pageX-canvasOffset.left;
         lastMouseY = e.pageY-canvasOffset.top;
 
-        for (i = bubbles.length-1; i >= 0; i--) {
-            if (bubbles[i].value > Math.sqrt(Math.pow(lastMouseX - bubbles[i].x, 2) + Math.pow(lastMouseY - bubbles[i].y, 2))) {
+        for (i = shapes.length-1; i >= 0; i--) {
+            if (shapes[i].value > Math.sqrt(Math.pow(lastMouseX - shapes[i].x, 2) + Math.pow(lastMouseY - shapes[i].y, 2))) {
                 bubblePressed = true;
                 selectedBubbleIndex = i;
                 selectBubble();
@@ -127,7 +127,7 @@ var bbs = (function () {
         };
 
         if (selectedBubbleIndex !== null) {
-            bubble = bubbles[selectedBubbleIndex];
+            bubble = shapes[selectedBubbleIndex];
 
             distance = Math.sqrt(Math.pow(x - bubble.x, 2) + Math.pow(y - bubble.y, 2));
 
@@ -153,11 +153,11 @@ var bbs = (function () {
                     offsetX = x - lastMouseX;
                     offsetY = y - lastMouseY;
 
-                    bubbles[selectedBubbleIndex].x = bubbles[selectedBubbleIndex].x + offsetX;
-                    bubbles[selectedBubbleIndex].y = bubbles[selectedBubbleIndex].y + offsetY;
+                    shapes[selectedBubbleIndex].x = shapes[selectedBubbleIndex].x + offsetX;
+                    shapes[selectedBubbleIndex].y = shapes[selectedBubbleIndex].y + offsetY;
 
-                    bbs.$elems.bubbleXInput().val(bubbles[selectedBubbleIndex].x);
-                    bbs.$elems.bubbleYInput().val(bubbles[selectedBubbleIndex].y);
+                    bbs.$elems.bubbleXInput().val(shapes[selectedBubbleIndex].x);
+                    bbs.$elems.bubbleYInput().val(shapes[selectedBubbleIndex].y);
                 }
             }
 
@@ -175,22 +175,22 @@ var bbs = (function () {
             return;
         }
 
-        bubbles[selectedBubbleIndex].x = parseInt(bbs.$elems.bubbleXInput().val(), 10);
-        bubbles[selectedBubbleIndex].y = parseInt(bbs.$elems.bubbleYInput().val(), 10);
-        bubbles[selectedBubbleIndex].value = parseInt(bbs.$elems.bubbleValueInput().val(), 10);
-        bubbles[selectedBubbleIndex].title = bbs.$elems.bubbleTitleInput().val();
+        shapes[selectedBubbleIndex].x = parseInt(bbs.$elems.bubbleXInput().val(), 10);
+        shapes[selectedBubbleIndex].y = parseInt(bbs.$elems.bubbleYInput().val(), 10);
+        shapes[selectedBubbleIndex].value = parseInt(bbs.$elems.bubbleValueInput().val(), 10);
+        shapes[selectedBubbleIndex].title = bbs.$elems.bubbleTitleInput().val();
 
         render();
     };
     colorChange = function (hexValue) {
           if (selectedBubbleIndex !== null) {
-              bubbles[selectedBubbleIndex].color = hexValue;
+              shapes[selectedBubbleIndex].color = hexValue;
               render();
           }
     };
 
     initModule = function (containerId) {
-        bubbles = [];
+        shapes = [];
 
         bbs.$elems.init(containerId);
         bbs.canvas.init();
