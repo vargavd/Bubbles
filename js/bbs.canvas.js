@@ -9,7 +9,7 @@ bbs.canvas = (function () {
     'use strict';
     var drawBubble, drawDiagram, initModule, clearCanvas, drawAxises,
         $canvas, ctx, canvasHeight, canvasWidth, addBubble,
-        drawLine, drawText;
+        drawLine, drawText, drawRect, drawTriangle, renderTextForShape;
 
     clearCanvas = function () {
         var grd = ctx.createLinearGradient(canvasWidth,0,0,canvasHeight);
@@ -67,6 +67,19 @@ bbs.canvas = (function () {
         ctx.textAlign = 'center';
         ctx.fillText(text, x, y);
     };
+    renderTextForShape = function (x, y, title, value, color, selected, showTitle, showValue) {
+        if (showTitle) {
+            if (selected) {
+                drawText(x, y-value-3, 'red', 'Verdana, sans-serif', 12, title);
+            }
+            else {
+                drawText(x, y-value-3, 'black', 'Verdana, sans-serif', 12, title);
+            }
+        }
+        if (showValue) {
+            drawText(x, y+4, color, 'Verdana, sans-serif', 12, value);
+        }
+    };
     drawBubble = function (x, y, radius, color, title, value, selected, showTitle, showValue) {
         var grd = ctx.createRadialGradient(x, y, 1, x, y, radius*1.4);
         grd.addColorStop(0, "white");
@@ -77,18 +90,32 @@ bbs.canvas = (function () {
         ctx.fillStyle = grd;
         ctx.fill();
 
-        if (showTitle) {
-            if (selected) {
-                drawText(x, y-radius-3, 'red', 'Verdana, sans-serif', 12, title);
-            }
-            else {
-                drawText(x, y-radius-3, 'black', 'Verdana, sans-serif', 12, title);
-            }
+        renderTextForShape(x, y, title, value, color, selected, showTitle, showValue);
+    };
+    drawRect = function (x, y, radius, color, title, value, selected, showTitle, showValue) {
+        var grd = ctx.createRadialGradient(x, y, 1, x, y, radius*1.4);
+        grd.addColorStop(0, "white");
+        grd.addColorStop(1, color);
 
-        }
-        if (showValue) {
-            drawText(x, y+4, color, 'Verdana, sans-serif', 12, value);
-        }
+        ctx.beginPath();
+        ctx.fillStyle = grd;
+        ctx.fillRect(x-radius, y-radius, 2*radius, 2*radius);
+
+        renderTextForShape(x, y, title, value, color, selected, showTitle, showValue);
+    };
+    drawTriangle = function (x, y, radius, color, title, value, selected, showTitle, showValue) {
+        var grd = ctx.createRadialGradient(x, y, 1, x, y, radius*1.4);
+        grd.addColorStop(0, "white");
+        grd.addColorStop(1, color);
+
+        ctx.beginPath();
+        ctx.fillStyle = grd;
+        ctx.moveTo(x, y - radius); // upper point
+        ctx.lineTo(Math.round(x + 0.866*radius), Math.round(y + radius/2));
+        ctx.lineTo(Math.round(x - 0.866*radius), Math.round(y + radius/2));
+        ctx.fill();
+
+        renderTextForShape(x, y, title, value, color, selected, showTitle, showValue);
     };
 
     initModule = function () {
@@ -105,6 +132,8 @@ bbs.canvas = (function () {
         init: initModule,
         render: drawDiagram,
         addBubble: addBubble,
-        drawBubble: drawBubble
+        drawBubble: drawBubble,
+        drawRect: drawRect,
+        drawTriangle: drawTriangle
     };
 }());

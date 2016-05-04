@@ -15,6 +15,7 @@ bbs.$elems = (function () {
         showValuesCBId = "bubbles-values",
         xFieldId = "bubble-x-coordinate",
         yFieldId = "bubble-y-coordinate",
+        shapeSelectId = "bubble-shape-select",
         colorSampleId = "bubble-color-sample",
         colorChangeEventHandlers = [], addColorChangeEventHandler, colorChangeEvent;
 
@@ -73,6 +74,12 @@ bbs.$elems = (function () {
             '<input type="text" id="' + xFieldId + '" placeholder="X" size="3"/>' +
             '<label for="' + yFieldId + '">Y: </label>' +
             '<input type="text" id="' + yFieldId + '" placeholder="Y" size="3"/>' +
+            '<label for="' + shapeSelectId + '">Shape: </label>' +
+            '<select "text" id="' + shapeSelectId + '">' +
+            '   <option>Circle</option>' + 
+            '   <option>Rectangle</option>' + 
+            '   <option>Triangle</option>' + 
+            '</select>' + 
             '<label for="' + colorSampleId + '">Color: </label>' +
             '<div id="' + colorSampleId + '">' +
                 '<input type="hidden" value="#00f"/>' +
@@ -119,6 +126,7 @@ bbs.$elems = (function () {
         bubbleValueInput: function () { return $("#" + valueFieldId); },
         bubbleXInput: function () { return $("#" + xFieldId); },
         bubbleYInput: function () { return $("#" + yFieldId); },
+        shapeSelect: function () { return $("#" + shapeSelectId); },
         bubbleColorInput: function () { return $("#" + colorSampleId + " input"); },
         addColorChangeEventHandler: addColorChangeEventHandler,
         setBubbleColorInput: setBubbleColorInput,

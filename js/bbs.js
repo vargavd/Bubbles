@@ -27,18 +27,41 @@ var bbs = (function () {
         }
 
         selectedBubbleIndex = shapes.length;
-
-        shapes.push(bbs.shapes.getCircle({
-            x: e.pageX - canvasOffset.left,
-            y: e.pageY - canvasOffset.top,
-            value: parseInt(bbs.$elems.bubbleValueInput().val(), 10),
-            color: bbs.$elems.bubbleColorInput().val(),
-            title: bbs.$elems.bubbleTitleInput().val(),
-            id:  ++bubbleId,
-            selected: true
-        }));
-
-
+        
+        switch (bbs.$elems.shapeSelect().val()) {
+            case "Rectangle":
+                shapes.push(bbs.shapes.getRect({
+                    x: e.pageX - canvasOffset.left,
+                    y: e.pageY - canvasOffset.top,
+                    value: parseInt(bbs.$elems.bubbleValueInput().val(), 10),
+                    color: bbs.$elems.bubbleColorInput().val(),
+                    title: bbs.$elems.bubbleTitleInput().val(),
+                    id:  ++bubbleId,
+                    selected: true
+                }));
+                break;
+            case "Triangle":
+                shapes.push(bbs.shapes.getTriangle({
+                    x: e.pageX - canvasOffset.left,
+                    y: e.pageY - canvasOffset.top,
+                    value: parseInt(bbs.$elems.bubbleValueInput().val(), 10),
+                    color: bbs.$elems.bubbleColorInput().val(),
+                    title: bbs.$elems.bubbleTitleInput().val(),
+                    id:  ++bubbleId,
+                    selected: true
+                }));
+                break;
+            default:
+                shapes.push(bbs.shapes.getCircle({
+                    x: e.pageX - canvasOffset.left,
+                    y: e.pageY - canvasOffset.top,
+                    value: parseInt(bbs.$elems.bubbleValueInput().val(), 10),
+                    color: bbs.$elems.bubbleColorInput().val(),
+                    title: bbs.$elems.bubbleTitleInput().val(),
+                    id:  ++bubbleId,
+                    selected: true
+                }));
+        };
 
         render();
     };
