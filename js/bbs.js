@@ -113,7 +113,7 @@ var bbs = (function () {
         }
     };
     mouseMove = function (e) {
-        var bubble, showResizeCursor, offsetX, offsetY, distance,
+        var shape, showResizeCursor, offsetX, offsetY,
             x = e.pageX - canvasOffset.left,
             y = e.pageY - canvasOffset.top;
 
@@ -127,21 +127,18 @@ var bbs = (function () {
         };
 
         if (selectedBubbleIndex !== null) {
-            bubble = shapes[selectedBubbleIndex];
+            shape = shapes[selectedBubbleIndex];
 
-            distance = Math.sqrt(Math.pow(x - bubble.x, 2) + Math.pow(y - bubble.y, 2));
-
-            if (distance > bubble.value - 7 && distance < bubble.value + 7) {
-                showResizeCursor(bubble.x, bubble.y);
+            if (shape.isItOnTheEdge(shape.x, shape.y, shape.value, x, y)) {
+                showResizeCursor(shape.x, shape.y);
 
                 if (bubblePressed) {
-                    bubble.value = Math.round(distance);
-                    bbs.$elems.bubbleValueInput().val(bubble.value);
+                    bbs.$elems.bubbleValueInput().val(shape.setRadius(shape.x, shape.y, x, y));
                 }
             }
             else {
 
-                if (distance < bubble.value-6) {
+                if (shape.isItHover(shape.x, shape.y, shape.value, x, y)) {
                     bbs.$elems.canvas().css("cursor", "move");
                 }
                 else {
