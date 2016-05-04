@@ -6,4 +6,6 @@ This project was made for learning javascript standards and practises.
 You can make bubbles on the canvas with double click, you can resize them with mouse or delete with right click.
 If you select a bubble, you can see its values on the bottom bar - and you can modify them as well there.
 
+Now you can make rectangles and triangles as well.
+
 Have fun :)
