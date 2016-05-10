@@ -9,7 +9,7 @@ bbs.canvas = (function () {
     'use strict';
     var drawBubble, drawDiagram, initModule, clearCanvas, drawAxises,
         $canvas, ctx, canvasHeight, canvasWidth, addBubble,
-        drawLine, drawText, drawRect, drawTriangle, renderTextForShape;
+        drawLine, drawText, drawRect, drawSquare, drawCircle, drawTriangle, renderTextForShape;
 
     clearCanvas = function () {
         var grd = ctx.createLinearGradient(canvasWidth,0,0,canvasHeight);
@@ -23,6 +23,9 @@ bbs.canvas = (function () {
         clearCanvas();
         $.each(shapes, function (i, shape) {
             shape.draw(shape.x, shape.y, shape.value, shape.color, shape.title, shape.value, shape.selected, showTitles, showValues);
+            if (shape.selected) {
+                shape.drawContact(shape.x, shape.y, shape.value);
+            }
         });
         drawAxises();
     };
@@ -80,6 +83,17 @@ bbs.canvas = (function () {
             drawText(x, y+4, color, 'Verdana, sans-serif', 12, value);
         }
     };
+    drawCircle = function (x, y, r, fillStyle = "rgba(255, 100, 100, 0.2)") {
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, 2 * Math.PI, false);
+        ctx.fillStyle = fillStyle;
+        ctx.fill();
+    };
+    drawRect = function (x, y, a, b, fillStyle = "rgba(255, 100, 100, 0.2)") {
+        ctx.beginPath();
+        ctx.fillStyle = fillStyle;
+        ctx.fillRect(x, y, a, b);
+    };
     drawBubble = function (x, y, radius, color, title, value, selected, showTitle, showValue) {
         var grd = ctx.createRadialGradient(x, y, 1, x, y, radius*1.4);
         grd.addColorStop(0, "white");
@@ -92,27 +106,31 @@ bbs.canvas = (function () {
 
         renderTextForShape(x, y, title, value, color, selected, showTitle, showValue);
     };
-    drawRect = function (x, y, radius, color, title, value, selected, showTitle, showValue) {
-        var grd = ctx.createRadialGradient(x, y, 1, x, y, radius*1.4);
+    drawSquare = function (x, y, radius, color, title, value, selected, showTitle, showValue) {
+        var grd = ctx.createRadialGradient(x, y, 1, x, y, radius*1.4), sq;
         grd.addColorStop(0, "white");
         grd.addColorStop(1, color);
 
+        sq = bbs.math.getSquareInfo(x, y, radius);
+        
         ctx.beginPath();
         ctx.fillStyle = grd;
-        ctx.fillRect(x-radius, y-radius, 2*radius, 2*radius);
+        ctx.fillRect(sq.x1, sq.y1, sq.side, sq.side);
 
         renderTextForShape(x, y, title, value, color, selected, showTitle, showValue);
     };
     drawTriangle = function (x, y, radius, color, title, value, selected, showTitle, showValue) {
-        var grd = ctx.createRadialGradient(x, y, 1, x, y, radius*1.4);
+        var grd = ctx.createRadialGradient(x, y, 1, x, y, radius*1.4), tr;
         grd.addColorStop(0, "white");
         grd.addColorStop(1, color);
 
+        tr = bbs.math.getIsoscelesTriangleInfo(x, y, radius);
+
         ctx.beginPath();
         ctx.fillStyle = grd;
-        ctx.moveTo(x, y - radius); // upper point
-        ctx.lineTo(Math.round(x + 0.866*radius), Math.round(y + radius/2));
-        ctx.lineTo(Math.round(x - 0.866*radius), Math.round(y + radius/2));
+        ctx.moveTo(tr.x1, tr.y1);
+        ctx.lineTo(tr.x2, tr.y2);
+        ctx.lineTo(tr.x3, tr.y3);
         ctx.fill();
 
         renderTextForShape(x, y, title, value, color, selected, showTitle, showValue);
@@ -133,7 +151,9 @@ bbs.canvas = (function () {
         render: drawDiagram,
         addBubble: addBubble,
         drawBubble: drawBubble,
+        drawSquare: drawSquare,
+        drawTriangle: drawTriangle,
         drawRect: drawRect,
-        drawTriangle: drawTriangle
+        drawCircle: drawCircle
     };
 }());

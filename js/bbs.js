@@ -29,8 +29,8 @@ var bbs = (function () {
         selectedBubbleIndex = shapes.length;
         
         switch (bbs.$elems.shapeSelect().val()) {
-            case "Rectangle":
-                shapes.push(bbs.shapes.getRect({
+            case "Square":
+                shapes.push(bbs.shapes.getSquare({
                     x: e.pageX - canvasOffset.left,
                     y: e.pageY - canvasOffset.top,
                     value: parseInt(bbs.$elems.bubbleValueInput().val(), 10),
@@ -127,7 +127,7 @@ var bbs = (function () {
         lastMouseY = e.pageY-canvasOffset.top;
 
         for (i = shapes.length-1; i >= 0; i--) {
-            if (shapes[i].value > Math.sqrt(Math.pow(lastMouseX - shapes[i].x, 2) + Math.pow(lastMouseY - shapes[i].y, 2))) {
+            if (shapes[i].isItHover(shapes[i].x, shapes[i].y, shapes[i].value, lastMouseX, lastMouseY)) {
                 bubblePressed = true;
                 selectedBubbleIndex = i;
                 selectBubble();
@@ -141,7 +141,13 @@ var bbs = (function () {
             y = e.pageY - canvasOffset.top;
 
         showResizeCursor = function (bubbleX, bubbleY) {
-            if ((x <= bubbleX && y <= bubbleY) || (x >= bubbleX && y >= bubbleY)) {
+            if (x - 5 <= bubbleX && x + 5 > bubbleX) {
+                bbs.$elems.canvas().css("cursor", "n-resize");
+            }
+            else if (y - 5 <= bubbleY && y + 5 > bubbleY) {
+                bbs.$elems.canvas().css("cursor", "w-resize");
+            }
+            else if ((x < bubbleX && y < bubbleY) || (x > bubbleX && y > bubbleY)) {
                 bbs.$elems.canvas().css("cursor", "nw-resize");
             }
             else {
@@ -151,7 +157,7 @@ var bbs = (function () {
 
         if (selectedBubbleIndex !== null) {
             shape = shapes[selectedBubbleIndex];
-
+            
             if (shape.isItOnTheEdge(shape.x, shape.y, shape.value, x, y)) {
                 showResizeCursor(shape.x, shape.y);
 

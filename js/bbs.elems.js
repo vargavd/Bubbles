@@ -77,7 +77,7 @@ bbs.$elems = (function () {
             '<label for="' + shapeSelectId + '">Shape: </label>' +
             '<select "text" id="' + shapeSelectId + '">' +
             '   <option>Circle</option>' + 
-            '   <option>Rectangle</option>' + 
+            '   <option>Square</option>' + 
             '   <option>Triangle</option>' + 
             '</select>' + 
             '<label for="' + colorSampleId + '">Color: </label>' +

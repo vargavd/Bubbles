@@ -7,6 +7,10 @@ bbs.shapes = {
         sp = Object.create(proto);
         
         sp.draw = bbs.canvas.drawBubble;
+        sp.drawContact = bbs.canvas.drawCircle;
+        sp.isItHover = bbs.math.isItInCircle;
+        sp.isItOnTheEdge = bbs.math.isItOnCircleLine;
+        
         sp.setRadius = function (x, y, mx, my) {
             var distance;
             
@@ -15,50 +19,49 @@ bbs.shapes = {
             proto.value = Math.round(distance);
             
             return proto.value;
-        };
-        sp.isItHover = function (x, y, r, mx, my) {
-            var distance;
-            
-            distance = Math.sqrt(Math.pow(mx - x, 2) + Math.pow(my - y, 2));
-            
-            return distance < r - 6;
-        };
-        sp.isItOnTheEdge = function (x, y, r, mx, my) {
-            var distance;
-            
-            distance = Math.sqrt(Math.pow(mx - x, 2) + Math.pow(my - y, 2));
-            
-            return distance > r - 7 && distance < r + 7;
         };
         
         return sp;
     },
-    getRect: function (proto) {
+    getSquare: function (proto) {
         var sp;
         
         sp = Object.create(proto);
         
-        sp.draw = bbs.canvas.drawRect;
+        sp.draw = bbs.canvas.drawSquare;
+        
+        sp.drawContact = function (x, y, r, fillStyle) {
+            var sq;
+            
+            sq = bbs.math.getSquareInfo(x, y, r);
+            
+            bbs.canvas.drawRect(sq.x1, sq.y1, sq.side, sq.side, fillStyle);
+            bbs.canvas.drawCircle(sq.x1, sq.y1, 5);
+            bbs.canvas.drawCircle(sq.x2, sq.y2, 5);
+            bbs.canvas.drawCircle(sq.x3, sq.y3, 5);
+            bbs.canvas.drawCircle(sq.x4, sq.y4, 5);
+        };
         sp.setRadius = function (x, y, mx, my) {
-            var distance;
-            
-            distance = Math.sqrt(Math.pow(mx - x, 2) + Math.pow(my - y, 2));
-            
-            proto.value = Math.round(distance);
+            proto.value = bbs.math.getDistance(x, y, mx, my);
             
             return proto.value;
         };
         sp.isItHover = function (x, y, r, mx, my) {
-            return ( (my > (y-r)+5) && // top line 
-                     (mx < (x+r)-5) && // right line
-                     (mx > (x-r)+5) && // left line
-                     (my < (y+r)-5) )  // bottom line
+            var sq = bbs.math.getSquareInfo(x, y, r);
+            
+            return ( bbs.math.isItInCircle(sq.x1, sq.y1, 5, mx, my) ||  // left top
+                     bbs.math.isItInCircle(sq.x2, sq.y2, 5, mx, my) ||  // right top
+                     bbs.math.isItInCircle(sq.x3, sq.y3, 5, mx, my) ||  // right bottom
+                     bbs.math.isItInCircle(sq.x4, sq.y4, 5, mx, my) ||  // left bottom
+                     sq.isItInSquare(mx, my));                          // inside square
         };
         sp.isItOnTheEdge = function (x, y, r, mx, my) {
-            return ( ((y-r)-5 <= my && (y-r)+5 >= my && (x-r) <= mx && mx <= x+r) || // top line 
-                     ((x+r)-5 <= mx && (x+r)+5 >= mx && (y-r) <= my && my <= y+r) || // right line
-                     ((x-r)-5 <= mx && (x-r)+5 >= mx && (y-r) <= my && my <= y+r) || // left line
-                     ((y+r)-5 <= my && (y+r)+5 >= my && (x-r) <= mx && mx <= x+r) )  // bottom line
+            var sq = bbs.math.getSquareInfo(x, y, r);
+            
+            return ( bbs.math.isItInCircle(sq.x1, sq.y1, 5, mx, my) ||  // left top
+                     bbs.math.isItInCircle(sq.x2, sq.y2, 5, mx, my) ||  // right top
+                     bbs.math.isItInCircle(sq.x3, sq.y3, 5, mx, my) ||  // right bottom
+                     bbs.math.isItInCircle(sq.x4, sq.y4, 5, mx, my) )   // left bottom
         };
         
         return sp;
@@ -69,20 +72,43 @@ bbs.shapes = {
         sp = Object.create(proto);
         
         sp.draw = bbs.canvas.drawTriangle;
-        sp.setRadius = function (x, y, mx, my) {
-            var distance;
+        
+        sp.drawContact = function (x, y, r, fillStyle) {
+            var tr;
             
-            distance = Math.sqrt(Math.pow(mx - x, 2) + Math.pow(my - y, 2));
+            tr = bbs.math.getIsoscelesTriangleInfo(x, y, r);
             
-            proto.value = Math.round(distance);
+            bbs.canvas.drawCircle(tr.x1, tr.y1, 5);
+            bbs.canvas.drawCircle(tr.x2, tr.y2, 5);
+            bbs.canvas.drawCircle(tr.x3, tr.y3, 5);
+            
+            // inner rectangle for dragging
+            bbs.canvas.drawRect(tr.innerRect.x1, tr.innerRect.y1, tr.innerRect.side, tr.innerRect.side, fillStyle);
+        };
+        sp.setRadius = function (x, y, mx, my) {            
+            proto.value = bbs.math.getDistance(x, y, mx, my);
             
             return proto.value;
         };
         sp.isItHover = function (x, y, r, mx, my) {
-            // TODO -> it will be f*ing interesting... back to secondary school geometry basics i think :)
+            var tr;
+            
+            tr = bbs.math.getIsoscelesTriangleInfo(x, y, r);
+            
+            return ( bbs.math.isItInCircle(tr.x1, tr.y1, 5, mx, my) || // upper point
+                     bbs.math.isItInCircle(tr.x2, tr.y2, 5, mx, my) || // right point
+                     bbs.math.isItInCircle(tr.x3, tr.y3, 5, mx, my) || // left point
+                     bbs.math.isItInSquare(tr.innerRect.ox, tr.innerRect.oy, tr.innerRect.r, mx, my)); // inner rect
+            
         };
         sp.isItOnTheEdge = function (x, y, r, mx, my) {
-            // TODO -> it will be f*ing interesting... back to secondary school geometry basics i think :)
+            var tr;
+            
+            tr = bbs.math.getIsoscelesTriangleInfo(x, y, r);
+            
+            return ( bbs.math.isItInCircle(tr.x1, tr.y1, 5, mx, my) || // upper point
+                     bbs.math.isItInCircle(tr.x2, tr.y2, 5, mx, my) || // right point
+                     bbs.math.isItInCircle(tr.x3, tr.y3, 5, mx, my));  // left point
         };
         
         return sp;
